@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import validator from 'validator';
-import { NavLink,useNavigate } from 'react-router-dom';
+import { SpinnerCircularSplit } from "spinners-react"
+import { NavLink, useNavigate } from 'react-router-dom';
 import { BsEnvelopeFill, BsKeyFill } from 'react-icons/bs';
+import { signinUser } from '../slices/UserSlices';
+import { useDispatch, useSelector } from 'react-redux';
+
 const Signin = () => {
+  const state = useSelector((state) => state.user.loading);;
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const onClickHandler = async (e) => {
     e.preventDefault();
     if (!email || !password) {
@@ -14,33 +20,27 @@ const Signin = () => {
     if (!validator.isEmail(email)) {
       return alert("please type valid email")
     };
+    dispatch(signinUser({ email, password })).then((res) => {
+
+      console.log("🚀 ~ file: Signin.js ~ line 25 ~ dispatch ~ res", res)
+      if (res.payload.status == 200) {
+        window.alert("User is Successfully Login");
+
+        navigate("/")
+      }
+      else {
+        window.alert("invalid Crediential");
+
+      }
+    })
 
 
-    const response =await fetch("/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password
-      })
-
-    });
-   const data=await response.json();
-   if(data.status == 400 || data.status == 500 || data.status == 422){
-    return window.alert("user is not login please try again")
-   };
-   if(data.status== 200){
-    window.alert('user is successfully login');
-    console.log('user is successfully login');
-    navigate('/');
-
-   }
 
   }
   return (
     <>
+      {/* {message} */}
+      {/* {error} */}
       <section className="vh-100" style={{ backgroundColor: '' }}>
         <div className="container h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
@@ -60,7 +60,7 @@ const Signin = () => {
                           <BsEnvelopeFill style={{ height: "30px", width: "30px", marginBottom: "25px" }} className="fas  fa-lg me-3 fa-fw" />
                           <div className="form-outline flex-fill mb-0">
                             <input type="email" id="form3Example3c" className="form-control" value={email} onChange={(e) => { setEmail(e.target.value) }} />
-                            <label className="form-label" for="form3Example3c">Your Email</label>
+                            <label className="form-label" htmlFor="form3Example3c">Your Email</label>
                           </div>
                         </div>
 
@@ -68,22 +68,26 @@ const Signin = () => {
                           <BsKeyFill style={{ height: "30px", width: "30px", marginBottom: "25px" }} className="fas  fa-lg me-3 fa-fw" />
                           <div className="form-outline flex-fill mb-0">
                             <input type="password" id="form3Example4c" className="form-control" autoComplete='off' value={password} onChange={(e) => { setPassword(e.target.value) }} />
-                            <label className="form-label" for="form3Example4c">Password</label>
+                            <label className="form-label" htmlFor="form3Example4c">Password</label>
                           </div>
                         </div>
+                        <div style={{marginBottom:"90px"}}>
 
+                          {state &&
+                            <SpinnerCircularSplit style={{ position: "absolute", left: "20%", width: "40px" }} size={40} thickness={100} speed={100} color="rgba(67, 57, 172, 1)" />
 
-
-
+                          }
+                        </div>
 
 
 
                         <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                           <button type="button" className="btn btn-primary btn-lg" onClick={onClickHandler}>LOGIN</button>
                         </div>
+
                         <div className="d-flex align-items-center justify-content-center pb-4">
                           <p className="mb-0 me-2">Don't have an account?</p>
-                          <button type="button" class="btn btn-outline-danger" >
+                          <button type="button" className="btn btn-outline-danger" >
                             <NavLink style={{ textDecoration: 'none', color: 'black' }} to='/register'><span >Create new</span> </NavLink>
                           </button>
                         </div>

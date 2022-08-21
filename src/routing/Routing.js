@@ -1,5 +1,5 @@
 import React from 'react';
-import '../App.css'
+import '../App.css';
 import { Route, Routes } from 'react-router-dom';
 
 import Navbar from '../components/Navbar';
@@ -10,45 +10,28 @@ import Signin from '../components/Signin';
 import About from '../components/About';
 import ErrorPage from '../components/ErrorPage';
 import Logout from '../components/Logout';
+import ProductScreen from '../components/ProductScreen';
 
 const Routing = () => {
-    return (
-        <>
+  return (
+    <>
+      <Navbar />
 
-            <Navbar />
+      <Routes>
+        <Route path="/contact" element={<Contact />}></Route>
+        <Route path="/register" element={<Register />}></Route>
+        <Route path="/product/:slug" element={<ProductScreen />}></Route>
+        <Route path="/login" element={<Signin />}></Route>
+        <Route exact path="/" element={<Home />}></Route>
+        <Route path="/contact" element={<Contact />}></Route>
+        <Route path="/about" element={<About />}></Route>
+        <Route path="/logout" element={<Logout />}></Route>
+        <Route path="*" element={<ErrorPage />}>
+          {' '}
+        </Route>
+      </Routes>
+    </>
+  );
+};
 
-
-
-            <Routes>
-                <Route path="/contact" element={<Contact />}>
-
-                </Route>
-                <Route path="/register" element={<Register />}>
-
-                </Route>
-                {/* <Route path="/login" element={<Login />}>
-
-</Route> */}
-                <Route path='/login' element={<Signin />}>
-
-                </Route>
-                <Route exact path="/" element={<Home />}>
-
-                </Route>
-                <Route path="/contact" element={<Contact />}>
-
-                </Route>
-                <Route path="/about" element={<About />}>
-
-                </Route>
-                <Route path="/logout" element={<Logout />}>
-
-                </Route>
-                <Route path='*' element={<ErrorPage/>}> </Route>
-
-            </Routes>
-        </>
-    )
-}
-
-export default Routing
+export default Routing;

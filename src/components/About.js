@@ -1,47 +1,35 @@
-import React, { useEffect,useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import profile from '../assest/profile2.jpg';
 import { useNavigate } from 'react-router-dom';
-const About = () => {
-  const navigate=useNavigate();
+import { getUser } from '../slices/UserSlices';
+import { SpinnerCircularFixed } from 'spinners-react';
 
-  const [userData,setUserData]=useState({});
+import { useSelector, useDispatch } from 'react-redux';
+const About = () => {
+  const navigate = useNavigate();
+  const [Loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const userData = useSelector((state) => state.user.userDetail);
+  const login = useSelector((state) => state.user.login);
+
   console.log("🚀 ~ file: About.js ~ line 8 ~ About ~ userData", userData)
-  const checkUser = async () => {
-    try {
-      const res = await fetch("/about", {
-        method: 'GET',
-        headers: {
-          Accept: "application/json",
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      });
-      const data=await res.json();
-      console.log(data);
-      setUserData(data);
-     if(!res.status === 200){
-      const error =new Error(res.error);
-      throw error
-     }
-    } catch (error) {
-      console.log(error);
-   navigate('/login')
-      
-    }
-   
-  }
+
   useEffect(() => {
-    checkUser();
+    dispatch(getUser()).then(() => setLoading(true))
+    if (!login) {
+      navigate("/login")
+    }
   }, [])
 
   return (
     <>
-
+      { Loading ?
+      
       <div className="container" >
         <form method='GET'>
           <div className="row pt-5">
             <div className="col-md-4 col-sm-6">
-              <img src={profile} alt="raza" class="img-thumbnail" />
+              <img src={userData.imageUrl} alt="raza" class="img-thumbnail" />
               <h6 className='mt-3'>Work Link</h6>
               <a href="https://github.com/abubakarraza64" style={{ textDecoration: 'none' }} target='blank'>GitHub</a>
             </div>
@@ -71,6 +59,12 @@ const About = () => {
           </div>
         </form>
       </div>
+      :
+      <div>
+      <SpinnerCircularFixed style={{position:"absolute",top:"50%",width:"90px",right:"50%"}}   size={90} thickness={100} speed={100} color="rgba(57, 112, 172, 1)" secondaryColor="rgba(0, 0, 0, 0.44)" />
+      </div>
+    }
+
     </>
   )
 }
